@@ -1,5 +1,4 @@
-# Use the latest Node.js Alpine version as the base image
-FROM node:alpine
+FROM ghcr.io/puppeteer/puppeteer:latest
 
 # Set the working directory inside the container
 WORKDIR /app
