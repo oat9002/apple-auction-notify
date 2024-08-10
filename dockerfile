@@ -1,4 +1,5 @@
-FROM ghcr.io/puppeteer/puppeteer:latest
+# Use the latest Node.js Alpine version as the base image
+FROM zenika/alpine-chrome:with-node
 
 # Set the working directory inside the container
 WORKDIR /app
