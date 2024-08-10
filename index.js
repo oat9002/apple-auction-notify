@@ -4,7 +4,7 @@ import { sendMessage } from './telegram.js';
 import { CronJob } from 'cron';
 
 console.log('Start processing...');
-
+console.log(`RUN_ONCE: ${process.env.RUN_ONCE}`);
 if (process.env.RUN_ONCE === 'true') {
     console.log('Running once');
     run();
@@ -14,11 +14,18 @@ if (process.env.RUN_ONCE === 'true') {
 }
 
 async function runWithCron() {
-    const job = new CronJob(process.env.CRON, () => {
-        run();
-    }, null, false, 'Asia/Bangkok');
+    try {
+        const job = new CronJob(process.env.CRON, () => {
+            run();
+        }, null, false, 'Asia/Bangkok');
+    
+        job.start();
+        console.log(`Next 5 runs:\n${job.nextDates(5).map((date) => date.toString()).join('\n')}`);
 
-    job.start();
+    } catch (error) {
+        console.log('Cron pattern is invalid', error);
+    }
+
 }
 
 async function run() {
