@@ -4,7 +4,6 @@ import { sendMessage } from './telegram.js';
 import { CronJob } from 'cron';
 
 console.log('Start processing...');
-console.log(`RUN_ONCE: ${process.env.RUN_ONCE}`);
 if (process.env.RUN_ONCE === 'true') {
     console.log('Running once');
     run();
