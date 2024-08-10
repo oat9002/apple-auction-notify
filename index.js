@@ -1,5 +1,5 @@
 import 'dotenv/config';
-import { getCarsDetail } from './appleAuction.js';
+import { getCarsDetailWithRetry } from './appleAuction.js';
 import { sendMessage } from './telegram.js';
 import { CronJob } from 'cron';
 
@@ -28,7 +28,7 @@ async function runWithCron() {
 }
 
 async function run() {
-    const data = await getCarsDetail('https://www.appleauction.co.th/goods/Search?&ProductCategoryCode=CR&BrandCode=20&ModelCode=20007&SubModelCode=&Year=&ColorCode=&GearCode=&CcId=&FuelType=&view=G&_=1723195316008');
+    const data = await getCarsDetailWithRetry('https://www.appleauction.co.th/goods/Search?&ProductCategoryCode=CR&BrandCode=20&ModelCode=20007&SubModelCode=&Year=&ColorCode=&GearCode=&CcId=&FuelType=&view=G&_=1723195316008');
     const wantedCar = data.find((carData) => carData.find((d) => d === '46,902'));
     
     if (wantedCar === undefined) {

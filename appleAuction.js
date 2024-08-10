@@ -1,5 +1,23 @@
 import puppeteer from 'puppeteer';
 
+export async function getCarsDetailWithRetry(carDetailUrl, retry = 3) {
+    let data;
+    for (let i = 0; i < retry; i++) {
+        try {
+            data = await getCarsDetail(carDetailUrl);
+            break;
+        } catch {
+            // Do nothing
+        }
+    }
+
+    if (data === undefined) {
+        throw error;
+    }
+
+    return data;
+}
+
 export async function getCarsDetail(carDetailUrl) {
     const browser = await puppeteer.launch({headless: true});
     const page = await browser.newPage();
