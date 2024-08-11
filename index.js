@@ -7,6 +7,7 @@ console.log('Start processing...');
 if (process.env.RUN_ONCE === 'true') {
     console.log('Running once');
     run();
+    console.log('Stopping process...');
 } else {
     console.log(`Running with cron - ${process.env.CRON}`);
     runWithCron();
@@ -20,11 +21,18 @@ async function runWithCron() {
     
         job.start();
         console.log(`Next 5 runs:\n${job.nextDates(5).map((date) => date.toString()).join('\n')}`);
-
+        process.on('SIGINT', () => stopProcess(job));
+        process.on('SIGTERM', () => stopProcess(job));
     } catch (error) {
         console.log('Cron pattern is invalid', error);
     }
 
+}
+
+function stopProcess(job) {
+    console.log('Stopping process...');
+    job.stop();
+    process.exit();
 }
 
 async function run() {
