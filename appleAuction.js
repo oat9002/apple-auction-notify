@@ -1,48 +1,51 @@
-import puppeteer from 'puppeteer';
+import puppeteer from "puppeteer";
 
 export async function getCarsDetailWithRetry(carDetailUrl, retry = 3) {
-    let data;
-    for (let i = 0; i < retry; i++) {
-        try {
-            data = await getCarsDetail(carDetailUrl);
-            break;
-        } catch {
-            // Do nothing
-        }
+  let data;
+  let error;
+  for (let i = 0; i < retry; i++) {
+    try {
+      data = await getCarsDetail(carDetailUrl);
+      break;
+    } catch (err) {
+      error = err;
     }
+  }
 
-    if (data === undefined) {
-        throw error;
-    }
+  if (data === undefined) {
+    console.error(error);
+  }
 
-    return data;
+  return data;
 }
 
 export async function getCarsDetail(carDetailUrl) {
-    const browser = await puppeteer.launch({headless: true});
-    const page = await browser.newPage();
-    
-    await page.goto('https://www.appleauction.co.th/Home');
-    await page.setViewport({width: 1080, height: 1024});
-    await page.locator('#btn-login').click();
-    await page.locator('#UserName').fill(process.env.APPLE_AUCTION_USERNAME);
-    await page.locator('#Password').fill(process.env.APPLE_AUCTION_PASSWORD);
-    await Promise.all([
-        page.waitForNavigation(),
-        page.locator('#btn-sign').click()
-    ]);
-    await page.goto(carDetailUrl)
-    
-    const data = await page.evaluate(() => {
-        const t = document.querySelector('tbody').querySelectorAll('tr')
-    
-        return Array.from(t).map((tr) => {
-            const td = tr.querySelectorAll('td');
-            return Array.from(td).map((td) => td.textContent.trim()).filter((td) => td !== '');
-        });
+  const browser = await puppeteer.launch({ headless: true });
+  const page = await browser.newPage();
+
+  await page.goto("https://www.appleauction.co.th/Home");
+  await page.setViewport({ width: 1080, height: 1024 });
+  await page.locator("#btn-login").click();
+  await page.locator("#UserName").fill(process.env.APPLE_AUCTION_USERNAME);
+  await page.locator("#Password").fill(process.env.APPLE_AUCTION_PASSWORD);
+  await Promise.all([
+    page.waitForNavigation(),
+    page.locator("#btn-sign").click(),
+  ]);
+  await page.goto(carDetailUrl);
+
+  const data = await page.evaluate(() => {
+    const t = document.querySelector("tbody").querySelectorAll("tr");
+
+    return Array.from(t).map((tr) => {
+      const td = tr.querySelectorAll("td");
+      return Array.from(td)
+        .map((td) => td.textContent.trim())
+        .filter((td) => td !== "");
     });
+  });
 
-    await browser.close();
+  await browser.close();
 
-    return data;
+  return data;
 }
