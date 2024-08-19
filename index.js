@@ -7,7 +7,7 @@ console.log("Start processing...");
 
 if (process.env.RUN_ONCE === "true") {
   console.log("Running once");
-  run();
+  await run();
   console.log("Stopping process...");
 } else {
   console.log(`Running with cron - ${process.env.CRON}`);
@@ -56,8 +56,9 @@ async function run() {
     console.log("No car found");
   } else {
     const carDetail = wantedCar.slice(1, wantedCar.length - 4).join(" ");
-    const auctionDate = wantedCar[wantedCar.length - 1];
-    const msg = `รายละเอียด: ${carDetail}\nวันประมูล: ${auctionDate}`;
+    const auctionDate = (wantedCar[wantedCar.length - 1] !== "รอประมูล" ? wantedCar[wantedCar.length - 2] : "รอประมูล").replace(" ", "");
+    const auctionLocation = auctionDate !== "รอประมูล" ? wantedCar[wantedCar.length - 1] : "-";
+    const msg = `รายละเอียด: ${carDetail}\nวันประมูล: ${auctionDate}\nสถานที่: ${auctionLocation}`;
 
     sendMessage(msg);
   }
