@@ -14,4 +14,4 @@ RUN yarn install
 COPY . .
 
 # Start the application
-CMD [ "node", "index.js" ]
+CMD [ "yarn", "start" ]
