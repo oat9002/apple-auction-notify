@@ -63,6 +63,8 @@ function stopProcess(job) {
 }
 
 async function run() {
+  const messageToSend = [];
+
   for (const car of wantedCars) {
     const data = await getCarsDetailWithRetry(car.url);
     const wantedCar = data.find((carData) => carData.find((d) => d.replace(",", "") === car.mileage.toString()));
@@ -75,7 +77,9 @@ async function run() {
       const auctionLocation = auctionDate !== "รอประมูล" ? wantedCar[wantedCar.length - 1] : "-";
       const msg = `รายละเอียด: ${carDetail}\nวันประมูล: ${auctionDate}\nสถานที่: ${auctionLocation}`;
 
-      sendMessage(msg);
+      messageToSend.push(msg);
     }
   }
+
+  sendMessage(messageToSend.join("\n\n"));
 }

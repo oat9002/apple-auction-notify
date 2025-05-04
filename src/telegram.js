@@ -1,4 +1,3 @@
-import axios from "axios";
 import { withRetry } from "./retry.js";
 
 export async function sendMessage(msg) {
@@ -6,17 +5,15 @@ export async function sendMessage(msg) {
   const chatId = process.env.TELEGRAM_CHAT_ID;
 
   withRetry(async () => {
-    await axios.post(
-      `https://api.telegram.org/bot${botToken}/sendMessage`,
-      {
+    await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      body: new URLSearchParams({
         chat_id: chatId,
         text: msg,
-      },
-      {
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-        },
-      },
-    );
+      }),
+    });
   });
 }
